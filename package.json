@@ -1,0 +1,17 @@
+{
+  "name": "unigraph-routes",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev api/chatgpt.ts"
+  },
+  "dependencies": {
+    "@vercel/node": "^2.15.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.0"
+  }
+}
