@@ -66,6 +66,33 @@ export function configureCORS(req: VercelRequest, res: VercelResponse) {
   }
 
   const origin = req.headers.origin;
+
+  // Add support for Vercel preview deployments with unigraph-git-* pattern
+  if (origin) {
+    // Check for unigraph-git-*.vercel.app pattern (allowing anything after .vercel.app)
+    const unigraphGitPattern = /^https:\/\/unigraph-git-[^.]+\.vercel\.app.*$/;
+    if (unigraphGitPattern.test(origin)) {
+      // Allow any unigraph-git-*.vercel.app URL for preview deployments
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS"
+      );
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization, X-Requested-With"
+      );
+
+      // Handle preflight requests
+      if (req.method === "OPTIONS") {
+        res.status(200).end();
+        return true; // Indicates preflight handled
+      }
+
+      return false; // Indicates normal request processing should continue
+    }
+  }
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   } else if (allowedOrigins.length > 0) {
