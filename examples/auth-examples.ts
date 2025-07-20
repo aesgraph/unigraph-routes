@@ -7,6 +7,9 @@ dotenv.config();
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
+const EXAMPLE_EMAIL = "user@email.com";
+const EXAMPLE_PASSWORD = "password123";
+
 interface AuthRequest {
   email: string;
   password: string;
@@ -37,8 +40,8 @@ async function signInExample() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: "your-email@example.com", // Replace with your email
-        password: "your-password", // Replace with your password
+        email: EXAMPLE_EMAIL,
+        password: EXAMPLE_PASSWORD,
         action: "signin",
       }),
     });
@@ -64,48 +67,6 @@ async function signInExample() {
       );
     } else {
       console.log("❌ Sign in failed:", data.error);
-    }
-  } catch (error) {
-    console.error("Request failed:", error);
-  }
-}
-
-// Example 2: Sign up with new credentials
-async function signUpExample() {
-  try {
-    const response = await fetch(`${BASE_URL}/api/auth`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: "new-user@example.com", // Replace with new email
-        password: "new-password123", // Replace with new password
-        action: "signup",
-      }),
-    });
-
-    const data: AuthResponse = await response.json();
-
-    if (data.success) {
-      console.log("✅ Sign up successful!");
-      console.log("User ID:", data.user?.id);
-      console.log("User Email:", data.user?.email);
-      console.log("User Role:", data.user?.role);
-      console.log(
-        "Access Token:",
-        data.tokens?.access_token?.substring(0, 20) + "...",
-      );
-      console.log(
-        "Refresh Token:",
-        data.tokens?.refresh_token?.substring(0, 20) + "...",
-      );
-      console.log(
-        "Expires At:",
-        new Date(data.expires_at! * 1000).toISOString(),
-      );
-    } else {
-      console.log("❌ Sign up failed:", data.error);
     }
   } catch (error) {
     console.error("Request failed:", error);
