@@ -30,8 +30,8 @@ interface AuthResponse {
   error?: string;
 }
 
-const EXAMPLE_EMAIL = "test@example.com";
-const EXAMPLE_PASSWORD = "testpassword123";
+const EXAMPLE_EMAIL = "test@example.com"; //pragma: allowlist secret
+const EXAMPLE_PASSWORD = "testpassword123"; //pragma: allowlist secret
 
 describe("Auth API Tests", () => {
   test("should handle signin with valid credentials", async () => {
@@ -61,7 +61,7 @@ describe("Auth API Tests", () => {
 
     if (response.status === 401) {
       console.log(
-        "⚠️ Auth failed - invalid credentials (expected in test environment)",
+        "⚠️ Auth failed - invalid credentials (expected in test environment)"
       );
       assert.strictEqual(data.success, false);
       assert.ok(data.error);
