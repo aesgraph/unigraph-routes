@@ -367,7 +367,7 @@ describe("Auth API Tests", () => {
       },
       body: JSON.stringify({
         email: longEmail,
-        password: "testpassword123",
+        password: EXAMPLE_PASSWORD,
         action: "signin",
       }),
     });
