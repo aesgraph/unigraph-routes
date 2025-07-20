@@ -55,15 +55,15 @@ async function signInExample() {
       console.log("User Role:", data.user?.role);
       console.log(
         "Access Token:",
-        data.tokens?.access_token?.substring(0, 20) + "...",
+        data.tokens?.access_token?.substring(0, 20) + "..."
       );
       console.log(
         "Refresh Token:",
-        data.tokens?.refresh_token?.substring(0, 20) + "...",
+        data.tokens?.refresh_token?.substring(0, 20) + "..."
       );
       console.log(
         "Expires At:",
-        new Date(data.expires_at! * 1000).toISOString(),
+        new Date(data.expires_at! * 1000).toISOString()
       );
     } else {
       console.log("❌ Sign in failed:", data.error);
@@ -80,7 +80,7 @@ async function signInWithEnvVars() {
 
   if (!email || !password) {
     console.log(
-      "⚠️ Set TEST_EMAIL and TEST_PASSWORD environment variables to test with real credentials",
+      "⚠️ Set TEST_EMAIL and TEST_PASSWORD environment variables to test with real credentials"
     );
     return;
   }
@@ -107,7 +107,7 @@ async function signInWithEnvVars() {
       console.log("User Role:", data.user?.role);
       console.log(
         "Token expires:",
-        new Date(data.expires_at! * 1000).toLocaleString(),
+        new Date(data.expires_at! * 1000).toLocaleString()
       );
     } else {
       console.log("❌ Sign in with env vars failed:", data.error);
@@ -118,7 +118,7 @@ async function signInWithEnvVars() {
 }
 
 // Export functions for use in other modules
-export { signInExample, signUpExample, signInWithEnvVars };
+export { signInExample, signInWithEnvVars };
 
 // Uncomment and modify the function calls below to test with your credentials
 // signInExample();
