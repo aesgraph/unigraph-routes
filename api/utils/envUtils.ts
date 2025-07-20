@@ -3,9 +3,6 @@
  * Supports Vite, Vercel, and runtime environment variables
  */
 
-// Type for environment variable sources
-// type EnvSource = "vite" | "vercel" | "window" | "process";
-
 // Interface for environment variables
 interface EnvVars {
   VITE_OPENAI_API_KEY?: string;
