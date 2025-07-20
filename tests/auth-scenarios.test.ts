@@ -24,7 +24,7 @@ describe("Authentication Scenarios Tests", () => {
 
     const { response, data } = await makeAuthenticatedChatRequest(
       testMessages.basic,
-      { max_tokens: 50 }
+      { max_tokens: 50 },
     );
 
     assert.strictEqual(response.status, 200);
@@ -36,7 +36,7 @@ describe("Authentication Scenarios Tests", () => {
   test("should reject requests with no authorization header", async () => {
     const { response, data } = await makeUnauthenticatedChatRequest(
       testMessages.basic,
-      { max_tokens: 50 }
+      { max_tokens: 50 },
     );
 
     assert.strictEqual(response.status, 401);
@@ -48,7 +48,7 @@ describe("Authentication Scenarios Tests", () => {
   test("should reject requests with invalid bearer token", async () => {
     const { response, data } = await makeInvalidTokenChatRequest(
       testMessages.basic,
-      { max_tokens: 50 }
+      { max_tokens: 50 },
     );
 
     assert.strictEqual(response.status, 401);
@@ -210,7 +210,7 @@ describe("Authentication Scenarios Tests", () => {
       assert.strictEqual(data.success, false, `Failed for ${testCase.name}`);
       assert.ok(
         data.error && data.error.includes(testCase.expectedError),
-        `Expected error "${testCase.expectedError}" for ${testCase.name}, got: ${data.error}`
+        `Expected error "${testCase.expectedError}" for ${testCase.name}, got: ${data.error}`,
       );
     }
   });

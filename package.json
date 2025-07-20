@@ -10,7 +10,8 @@
     "test:performance": "./tests/run-tests.sh performance",
     "test:integration": "./tests/run-tests.sh integration",
     "test:auth": "./tests/run-tests.sh auth",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "build": "npx tsc --noEmit && npm run format -- --check"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4",

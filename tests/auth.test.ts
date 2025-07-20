@@ -61,7 +61,7 @@ describe("Auth API Tests", () => {
 
     if (response.status === 401) {
       console.log(
-        "⚠️ Auth failed - invalid credentials (expected in test environment)"
+        "⚠️ Auth failed - invalid credentials (expected in test environment)",
       );
       assert.strictEqual(data.success, false);
       assert.ok(data.error);

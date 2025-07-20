@@ -138,7 +138,7 @@ export function debugEnvVars(): void {
 
   const allVars = getAllEnvVars();
   const viteVars = Object.keys(allVars).filter((key) =>
-    key.startsWith("VITE_")
+    key.startsWith("VITE_"),
   );
 
   console.log("VITE_ variables found:", viteVars.length);
