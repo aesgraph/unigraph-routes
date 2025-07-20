@@ -30,8 +30,8 @@ interface AuthResponse {
   error?: string;
 }
 
-const EXAMPLE_EMAIL = "user@email.com"; //pragma: allowlist secret
-const EXAMPLE_PASSWORD = "password123"; //pragma: allowlist secret
+const EXAMPLE_EMAIL = "test@example.com";
+const EXAMPLE_PASSWORD = "testpassword123";
 
 describe("Auth API Tests", () => {
   test("should handle signin with valid credentials", async () => {
