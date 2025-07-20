@@ -42,8 +42,8 @@ fi
 echo -e "${GREEN}✅ Found latest deployment: ${LATEST_URL}${NC}"
 
 # Check if the TypeScript test script exists
-if [ ! -f "test-live-endpoints.ts" ]; then
-    echo -e "${RED}❌ test-live-endpoints.ts not found in current directory${NC}"
+if [ ! -f "scripts/test-live-endpoints.ts" ]; then
+    echo -e "${RED}❌ test-live-endpoints.ts not found in scripts directory${NC}"
     exit 1
 fi
 
@@ -58,7 +58,7 @@ echo -e "${BLUE}🚀 Running tests against latest deployment...${NC}"
 echo -e "${YELLOW}URL: ${LATEST_URL}${NC}"
 echo "=" | tr '\n' '=' | head -c 50; echo
 
-npx tsx test-live-endpoints.ts "$LATEST_URL"
+npx tsx scripts/test-live-endpoints.ts "$LATEST_URL"
 
 # Check the exit code
 if [ $? -eq 0 ]; then
