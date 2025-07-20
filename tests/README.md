@@ -230,8 +230,8 @@ npm run dev
 1. **Set up environment variables:**
 
    ```bash
-   export OPENAI_API_KEY="your-api-key"
-   export BASE_URL="http://localhost:3000"
+   export OPENAI_API_KEY="your-api-key" #pragma: allowlist secret
+   export BASE_URL="http://localhost:3000" #pragma: allowlist secret
    ```
 
 2. **Start your development server:**
