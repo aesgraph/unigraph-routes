@@ -8,9 +8,9 @@ set -e
 
 # Load environment variables from .env file if it exists
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    set -a; source .env; set +a
 elif [ -f ../.env ]; then
-    export $(grep -v '^#' ../.env | xargs)
+    set -a; source ../.env; set +a
 fi
 
 BASE_URL=${BASE_URL:-"http://localhost:3000"}
