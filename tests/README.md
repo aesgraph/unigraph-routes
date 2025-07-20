@@ -3,12 +3,15 @@
 This directory contains comprehensive tests for all API routes, including integration tests for authentication, data validation, and error handling.
 
 **Run with:**
+
 ```bash
 node --test tests/integration.test.ts
 ```
 
 ### 7. `test-utils.ts` - Test Utilities
+
 Helper functions for authentication and common test operations:
+
 - `getAuthToken()` - Get valid authentication token
 - `makeAuthenticatedChatRequest()` - Make authenticated API calls
 - `makeUnauthenticatedChatRequest()` - Test unauthenticated scenarios
@@ -17,9 +20,11 @@ Helper functions for authentication and common test operations:
 - `testMessages` - Predefined test message templates
 
 ### 8. `performance-clean.test.ts` - Standalone Performance Test
+
 Clean performance testing without test runner dependencies:
 
 **Run with:**
+
 ```bash
 npx tsx tests/performance-clean.test.ts
 ```
@@ -51,6 +56,7 @@ node tests/env-check.js
 ```
 
 This script will:
+
 - Check all required environment variables
 - Test authentication token retrieval
 - Verify token works with the API
@@ -59,19 +65,24 @@ This script will:
 ## Test Files
 
 ### 1. `auth.test.ts` - Authentication Tests
+
 Tests the authentication endpoint:
+
 - User signin/signup
 - Token generation
 - Credential validation
 - Error handling for invalid credentials
 
 **Run with:**
+
 ```bash
 node --test tests/auth.test.ts
 ```
 
 ### 2. `auth-scenarios.test.ts` - Authentication Scenarios
+
 Comprehensive testing of authentication edge cases:
+
 - Valid bearer token authentication
 - Missing authorization headers
 - Invalid token formats
@@ -79,12 +90,15 @@ Comprehensive testing of authentication edge cases:
 - Error message validation
 
 **Run with:**
+
 ```bash
 node --test tests/auth-scenarios.test.ts
 ```
 
 ### 3. `chat.test.ts` - Chat API Tests
+
 Tests chat functionality with proper authentication:
+
 - Authenticated chat requests
 - System prompt handling with auth
 - Unauthenticated request rejection
@@ -92,23 +106,29 @@ Tests chat functionality with proper authentication:
 - Input validation
 
 **Run with:**
+
 ```bash
 node --test tests/chat.test.ts
 ```
 
 ### 4. `streaming.test.ts` - Streaming Tests
+
 Tests streaming functionality with authentication:
+
 - Authenticated streaming responses
 - Non-streaming responses with auth
 - Unauthenticated streaming rejection
 
 **Run with:**
+
 ```bash
 node --test tests/streaming.test.ts
 ```
 
 ### 5. `performance.test.ts` - Performance Tests
+
 Evaluates API performance with proper authentication:
+
 - Authenticated response time measurement
 - Concurrent authenticated request testing
 - Large content handling with auth
@@ -116,25 +136,31 @@ Evaluates API performance with proper authentication:
 - Rate limiting behavior
 
 **Run with:**
+
 ```bash
 node --test tests/performance.test.ts
 ```
 
 ### 6. `integration.test.ts` - Integration Tests
+
 Tests complete chat flows with authentication:
+
 - Full conversation flows
 - Multiple message types
 - Cross-route functionality with auth
 
 **Run with:**
+
 ```bash
 node tests/integration.test.js
 ```
 
 ### 5. `run-tests.sh` - Test Runner Script
+
 Bash script to run all tests with organized output:
 
 **Run with:**
+
 ```bash
 # Run all tests
 ./tests/run-tests.sh
@@ -149,6 +175,7 @@ Bash script to run all tests with organized output:
 ## Environment Setup
 
 ### Required Environment Variables
+
 ```bash
 # For Chat API
 OPENAI_API_KEY=your_openai_api_key_here
@@ -162,6 +189,7 @@ BASE_URL=http://localhost:3000  # Default development server
 ```
 
 ### Starting the Development Server
+
 Before running tests, start your development server:
 
 ```bash
@@ -175,6 +203,7 @@ npm run dev
 ## Test Coverage
 
 ### Chat API Tests
+
 - ✅ Basic message sending
 - ✅ System prompt functionality
 - ✅ Message validation
@@ -186,23 +215,27 @@ npm run dev
 - ✅ Large content handling
 
 ### Auth API Tests
+
 - ✅ Error response validation
 - ✅ CORS headers
 - ✅ Method restrictions
 
 ### Hello API Tests
+
 - ✅ Basic functionality
 - ✅ Query parameter handling
 
 ## Quick Start
 
 1. **Set up environment variables:**
+
    ```bash
    export OPENAI_API_KEY="your-api-key"
    export BASE_URL="http://localhost:3000"
    ```
 
 2. **Start your development server:**
+
    ```bash
    vercel dev
    ```
@@ -215,6 +248,7 @@ npm run dev
 ## Test Output Examples
 
 ### Successful Test Run
+
 ```
 🧪 API Test Suite
 ==================
@@ -242,6 +276,7 @@ Content: Hello! How can I help you today?
 ```
 
 ### Performance Test Output
+
 ```
 ⚡ Performance Testing Chat API...
 
@@ -263,21 +298,27 @@ Content: Hello! How can I help you today?
 ### Common Issues and Solutions
 
 1. **Server not running:**
+
    ```
    ⚠️ Server doesn't seem to be running at http://localhost:3000
    ```
+
    **Solution:** Start your development server with `vercel dev`
 
 2. **Missing OpenAI API key:**
+
    ```
    ❌ Chat API failed: OpenAI API key not configured
    ```
+
    **Solution:** Set the `OPENAI_API_KEY` environment variable
 
 3. **Rate limiting:**
+
    ```
    ❌ OpenAI API quota exceeded
    ```
+
    **Solution:** Check your OpenAI account quota or wait before retrying
 
 4. **Network issues:**
@@ -296,14 +337,15 @@ To add new tests:
 4. **Follow the existing patterns** for consistency
 
 ### Example: Adding a new test
+
 ```javascript
-test('should handle new feature', async () => {
+test("should handle new feature", async () => {
   const response = await fetch(`${BASE_URL}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       // your test data
-    })
+    }),
   });
 
   const data = await response.json();

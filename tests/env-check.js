@@ -74,7 +74,7 @@ async function checkEnvironment() {
 
   if (!isAuthAvailable()) {
     console.log(
-      "  ❌ Authentication not available - missing TEST_EMAIL or TEST_PASSWORD"
+      "  ❌ Authentication not available - missing TEST_EMAIL or TEST_PASSWORD",
     );
     return;
   }
@@ -114,7 +114,7 @@ async function checkEnvironment() {
         console.log(`  📊 Response: ${data.message?.substring(0, 50)}...`);
       } else {
         console.log(
-          `  ❌ Token validation failed: ${response.status} - ${data.error}`
+          `  ❌ Token validation failed: ${response.status} - ${data.error}`,
         );
       }
     } else {

@@ -1,10 +1,7 @@
 // Load testing and performance tests
 // Run with: npx tsx tests/performance-clean.test.ts
 
-import { 
-  getAuthToken,
-  isAuthAvailable 
-} from "./test-utils.js";
+import { getAuthToken, isAuthAvailable } from "./test-utils.js";
 
 const PERF_BASE_URL: string = process.env.BASE_URL || "http://localhost:3000";
 
@@ -35,7 +32,9 @@ async function performanceTest(): Promise<void> {
   console.log("⚡ Performance Testing Chat API...\n");
 
   if (!isAuthAvailable()) {
-    console.log("❌ Cannot run performance tests - auth credentials not configured");
+    console.log(
+      "❌ Cannot run performance tests - auth credentials not configured",
+    );
     console.log("   Please add TEST_EMAIL and TEST_PASSWORD to your .env file");
     return;
   }
@@ -116,7 +115,7 @@ async function performanceTest(): Promise<void> {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(requestBody),
-      })
+      }),
     );
   }
 
@@ -128,7 +127,7 @@ async function performanceTest(): Promise<void> {
     const concurrentTime: number = concurrentEndTime - concurrentStartTime;
 
     console.log(
-      `✅ ${concurrentRequests} concurrent requests completed in ${concurrentTime}ms`
+      `✅ ${concurrentRequests} concurrent requests completed in ${concurrentTime}ms`,
     );
 
     let successCount: number = 0;
@@ -141,7 +140,7 @@ async function performanceTest(): Promise<void> {
         console.log(
           `  Request ${i + 1}: ❌ Failed (${responses[i].status}) - ${
             data.error
-          }`
+          }`,
         );
       }
     }
@@ -150,7 +149,7 @@ async function performanceTest(): Promise<void> {
       `📊 Success rate: ${successCount}/${concurrentRequests} (${(
         (successCount / concurrentRequests) *
         100
-      ).toFixed(1)}%)`
+      ).toFixed(1)}%)`,
     );
   } catch (error: unknown) {
     const err = error as Error;
@@ -211,9 +210,9 @@ function logMemoryUsage(): void {
     console.log(
       `  ${key}: ${
         Math.round(
-          (used[key as keyof NodeJS.MemoryUsage] / 1024 / 1024) * 100
+          (used[key as keyof NodeJS.MemoryUsage] / 1024 / 1024) * 100,
         ) / 100
-      } MB`
+      } MB`,
     );
   }
 }

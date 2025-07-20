@@ -4,13 +4,13 @@
 
 import { test, describe } from "node:test";
 import * as assert from "node:assert";
-import { 
-  makeAuthenticatedChatRequest, 
+import {
+  makeAuthenticatedChatRequest,
   makeUnauthenticatedChatRequest,
   makeInvalidTokenChatRequest,
   isAuthAvailable,
   getAuthToken,
-  testMessages 
+  testMessages,
 } from "./test-utils.js";
 
 const CHAT_BASE_URL: string = process.env.BASE_URL || "http://localhost:3000";
@@ -24,7 +24,7 @@ describe("Authentication Scenarios Tests", () => {
 
     const { response, data } = await makeAuthenticatedChatRequest(
       testMessages.basic,
-      { max_tokens: 50 }
+      { max_tokens: 50 },
     );
 
     assert.strictEqual(response.status, 200);
@@ -36,7 +36,7 @@ describe("Authentication Scenarios Tests", () => {
   test("should reject requests with no authorization header", async () => {
     const { response, data } = await makeUnauthenticatedChatRequest(
       testMessages.basic,
-      { max_tokens: 50 }
+      { max_tokens: 50 },
     );
 
     assert.strictEqual(response.status, 401);
@@ -48,7 +48,7 @@ describe("Authentication Scenarios Tests", () => {
   test("should reject requests with invalid bearer token", async () => {
     const { response, data } = await makeInvalidTokenChatRequest(
       testMessages.basic,
-      { max_tokens: 50 }
+      { max_tokens: 50 },
     );
 
     assert.strictEqual(response.status, 401);
@@ -123,19 +123,19 @@ describe("Authentication Scenarios Tests", () => {
     }
 
     // Test with system message
-    const { response: response1, data: data1 } = await makeAuthenticatedChatRequest(
-      testMessages.withSystem,
-      { max_tokens: 100 }
-    );
+    const { response: response1, data: data1 } =
+      await makeAuthenticatedChatRequest(testMessages.withSystem, {
+        max_tokens: 100,
+      });
 
     assert.strictEqual(response1.status, 200);
     assert.strictEqual(data1.success, true);
 
     // Test with conversation
-    const { response: response2, data: data2 } = await makeAuthenticatedChatRequest(
-      testMessages.conversation,
-      { max_tokens: 150 }
-    );
+    const { response: response2, data: data2 } =
+      await makeAuthenticatedChatRequest(testMessages.conversation, {
+        max_tokens: 150,
+      });
 
     assert.strictEqual(response2.status, 200);
     assert.strictEqual(data2.success, true);
@@ -150,8 +150,12 @@ describe("Authentication Scenarios Tests", () => {
     // Make multiple requests with the same token
     const requests = [
       makeAuthenticatedChatRequest(testMessages.basic, { max_tokens: 30 }),
-      makeAuthenticatedChatRequest([{ role: "user", content: "Count to 3" }], { max_tokens: 30 }),
-      makeAuthenticatedChatRequest([{ role: "user", content: "What's 1+1?" }], { max_tokens: 30 }),
+      makeAuthenticatedChatRequest([{ role: "user", content: "Count to 3" }], {
+        max_tokens: 30,
+      }),
+      makeAuthenticatedChatRequest([{ role: "user", content: "What's 1+1?" }], {
+        max_tokens: 30,
+      }),
     ];
 
     const responses = await Promise.all(requests);
@@ -167,24 +171,27 @@ describe("Authentication Scenarios Tests", () => {
     const testCases = [
       {
         name: "No auth header",
-        headers: { "Content-Type": "application/json" } as Record<string, string>,
-        expectedError: "Authorization header required"
+        headers: { "Content-Type": "application/json" } as Record<
+          string,
+          string
+        >,
+        expectedError: "Authorization header required",
       },
       {
         name: "Invalid format",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: "InvalidFormat token"
+          Authorization: "InvalidFormat token",
         } as Record<string, string>,
-        expectedError: "Authorization header required"
+        expectedError: "Authorization header required",
       },
       {
         name: "Invalid token",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer invalid-token-12345"
+          Authorization: "Bearer invalid-token-12345",
         } as Record<string, string>,
-        expectedError: "Invalid or expired token"
+        expectedError: "Invalid or expired token",
       },
     ];
 
@@ -203,7 +210,7 @@ describe("Authentication Scenarios Tests", () => {
       assert.strictEqual(data.success, false, `Failed for ${testCase.name}`);
       assert.ok(
         data.error && data.error.includes(testCase.expectedError),
-        `Expected error "${testCase.expectedError}" for ${testCase.name}, got: ${data.error}`
+        `Expected error "${testCase.expectedError}" for ${testCase.name}, got: ${data.error}`,
       );
     }
   });

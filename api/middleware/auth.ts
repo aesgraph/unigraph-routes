@@ -17,13 +17,13 @@ const APPROVED_USERS = (process.env.APPROVED_USERS || "")
 
 export async function authenticateUser(
   req: AuthenticatedRequest,
-  res: VercelResponse
+  res: VercelResponse,
 ): Promise<boolean> {
   // If the whitelist is not set, handle based on environment
   if (!process.env.APPROVED_USERS || APPROVED_USERS.length === 0) {
     if (process.env.NODE_ENV === "development") {
       console.warn(
-        "Warning: APPROVED_USERS is not set. Bypassing user approval check in development mode."
+        "Warning: APPROVED_USERS is not set. Bypassing user approval check in development mode.",
       );
       // In development mode, we still require authentication but skip whitelist
       const bypassWhitelist = true;

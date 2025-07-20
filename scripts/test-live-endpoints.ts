@@ -31,7 +31,7 @@ if (args.length === 0) {
   logBold("❌ Error: Vercel URL is required", "red");
   console.log("Usage: npx tsx test-live-endpoints.ts <vercel-url>");
   console.log(
-    "Example: npx tsx test-live-endpoints.ts https://unigraph-routes-3cstv7irs-aesgraph.vercel.app"
+    "Example: npx tsx test-live-endpoints.ts https://unigraph-routes-3cstv7irs-aesgraph.vercel.app",
   );
   process.exit(1);
 }
@@ -70,7 +70,7 @@ interface ChatResponse {
 async function testEndpoint(
   name: string,
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ) {
   try {
     logBold(`\n${name}`, "yellow");
@@ -117,7 +117,7 @@ async function main() {
   // Test 1: Hello endpoint (public)
   await testEndpoint(
     "1. Testing Hello Endpoint (Public)",
-    `${LIVE_URL}/api/hello`
+    `${LIVE_URL}/api/hello`,
   );
 
   // Test 2: Auth endpoint - Get bearer token
@@ -147,7 +147,7 @@ async function main() {
         password: testPassword,
         action: "signin",
       }),
-    }
+    },
   );
 
   let token: string | null = null;
@@ -158,7 +158,7 @@ async function main() {
     log("❌ Failed to get token. Please check credentials.", "red");
     log(
       "Make sure your .env file has valid TEST_EMAIL and TEST_PASSWORD",
-      "yellow"
+      "yellow",
     );
     return;
   }
@@ -172,7 +172,7 @@ async function main() {
       body: JSON.stringify({
         messages: [{ role: "user", content: "Hello without auth" }],
       }),
-    }
+    },
   );
 
   // Test 4: Chat endpoint with auth (should work)
@@ -191,7 +191,7 @@ async function main() {
             { role: "user", content: "Hello from live endpoint test!" },
           ],
         }),
-      }
+      },
     );
   }
 
@@ -276,7 +276,7 @@ async function main() {
       body: JSON.stringify({
         messages: [{ role: "user", content: "This should fail" }],
       }),
-    }
+    },
   );
 
   // Test 7: Missing messages field
@@ -292,7 +292,7 @@ async function main() {
         body: JSON.stringify({
           stream: false,
         }),
-      }
+      },
     );
   }
 
@@ -302,7 +302,7 @@ async function main() {
     `${LIVE_URL}/api/chat`,
     {
       method: "GET",
-    }
+    },
   );
 
   // Test 9: CORS preflight
@@ -311,7 +311,7 @@ async function main() {
     `${LIVE_URL}/api/chat`,
     {
       method: "OPTIONS",
-    }
+    },
   );
 
   logBold("\n🎉 Live endpoint testing complete!", "green");

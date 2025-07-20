@@ -20,7 +20,7 @@ describe("Chat API Integration Tests", () => {
   test("should handle complete chat flow with authentication", async () => {
     if (!isAuthAvailable()) {
       console.log(
-        "⚠️ Skipping integration test - auth credentials not configured"
+        "⚠️ Skipping integration test - auth credentials not configured",
       );
       return;
     }
@@ -37,7 +37,7 @@ describe("Chat API Integration Tests", () => {
           content: "What is 2 + 2?",
         },
       ],
-      { max_tokens: 100 }
+      { max_tokens: 100 },
     );
 
     assert.strictEqual(response.status, 200);
@@ -49,14 +49,14 @@ describe("Chat API Integration Tests", () => {
   test("should handle conversation with multiple messages", async () => {
     if (!isAuthAvailable()) {
       console.log(
-        "⚠️ Skipping integration test - auth credentials not configured"
+        "⚠️ Skipping integration test - auth credentials not configured",
       );
       return;
     }
 
     const { response, data } = await makeAuthenticatedChatRequest(
       testMessages.conversation,
-      { max_tokens: 150 }
+      { max_tokens: 150 },
     );
 
     assert.strictEqual(response.status, 200);

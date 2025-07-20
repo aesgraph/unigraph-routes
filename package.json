@@ -9,7 +9,8 @@
     "test:streaming": "./tests/run-tests.sh streaming",
     "test:performance": "./tests/run-tests.sh performance",
     "test:integration": "./tests/run-tests.sh integration",
-    "test:auth": "./tests/run-tests.sh auth"
+    "test:auth": "./tests/run-tests.sh auth",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4",

@@ -100,7 +100,7 @@ export async function makeAuthenticatedChatRequest(
     temperature?: number;
     max_tokens?: number;
     stream?: boolean;
-  } = {}
+  } = {},
 ): Promise<{ response: Response; data: ChatResponse }> {
   const token = await getAuthToken();
 
@@ -135,7 +135,7 @@ export async function makeUnauthenticatedChatRequest(
     temperature?: number;
     max_tokens?: number;
     stream?: boolean;
-  } = {}
+  } = {},
 ): Promise<{ response: Response; data: ChatResponse }> {
   const response = await fetch(`${BASE_URL}/api/chat`, {
     method: "POST",
@@ -163,7 +163,7 @@ export async function makeInvalidTokenChatRequest(
     temperature?: number;
     max_tokens?: number;
     stream?: boolean;
-  } = {}
+  } = {},
 ): Promise<{ response: Response; data: ChatResponse }> {
   const response = await fetch(`${BASE_URL}/api/chat`, {
     method: "POST",

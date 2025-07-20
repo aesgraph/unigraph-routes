@@ -3,10 +3,10 @@
 
 import { test, describe } from "node:test";
 import * as assert from "node:assert";
-import { 
-  makeAuthenticatedChatRequest, 
+import {
+  makeAuthenticatedChatRequest,
   isAuthAvailable,
-  getAuthToken 
+  getAuthToken,
 } from "./test-utils.js";
 
 const CHAT_BASE_URL: string = process.env.BASE_URL || "http://localhost:3000";
@@ -39,12 +39,15 @@ interface PerformanceMetrics {
 // Helper function to measure response time with authentication
 async function measureAuthenticatedResponseTime(
   messages: any[],
-  options: any = {}
+  options: any = {},
 ): Promise<PerformanceMetrics> {
   const startTime = Date.now();
 
   try {
-    const { response, data } = await makeAuthenticatedChatRequest(messages, options);
+    const { response, data } = await makeAuthenticatedChatRequest(
+      messages,
+      options,
+    );
     const endTime = Date.now();
     const responseTime = endTime - startTime;
 
@@ -70,7 +73,7 @@ async function measureAuthenticatedResponseTime(
 async function runConcurrentAuthenticatedRequests(
   messages: any[],
   options: any,
-  concurrency: number
+  concurrency: number,
 ): Promise<PerformanceMetrics[]> {
   // Get the auth token once to use for all requests
   const token = await getAuthToken();
@@ -87,7 +90,9 @@ async function runConcurrentAuthenticatedRequests(
 describe("Chat API Performance Tests", () => {
   test("should have acceptable response time for basic requests", async () => {
     if (!isAuthAvailable()) {
-      console.log("⚠️ Skipping performance test - auth credentials not configured");
+      console.log(
+        "⚠️ Skipping performance test - auth credentials not configured",
+      );
       return;
     }
 
@@ -98,7 +103,7 @@ describe("Chat API Performance Tests", () => {
           content: "Say hello",
         },
       ],
-      { max_tokens: 50 }
+      { max_tokens: 50 },
     );
 
     console.log(`⚡ Response time: ${metrics.responseTime}ms`);
@@ -110,14 +115,16 @@ describe("Chat API Performance Tests", () => {
     assert.strictEqual(metrics.success, true);
     assert.ok(
       metrics.responseTime < 10000,
-      `Response time ${metrics.responseTime}ms is too slow (>10s)`
+      `Response time ${metrics.responseTime}ms is too slow (>10s)`,
     );
     assert.ok(metrics.responseTime > 0, "Response time should be positive");
   });
 
   test("should handle concurrent requests efficiently", async () => {
     if (!isAuthAvailable()) {
-      console.log("⚠️ Skipping performance test - auth credentials not configured");
+      console.log(
+        "⚠️ Skipping performance test - auth credentials not configured",
+      );
       return;
     }
 
@@ -131,11 +138,15 @@ describe("Chat API Performance Tests", () => {
     const options = { max_tokens: 30 };
 
     const startTime = Date.now();
-    const results = await runConcurrentAuthenticatedRequests(messages, options, concurrency);
+    const results = await runConcurrentAuthenticatedRequests(
+      messages,
+      options,
+      concurrency,
+    );
     const totalTime = Date.now() - startTime;
 
     console.log(
-      `⚡ ${concurrency} concurrent requests completed in ${totalTime}ms`
+      `⚡ ${concurrency} concurrent requests completed in ${totalTime}ms`,
     );
 
     let successCount = 0;
@@ -145,7 +156,7 @@ describe("Chat API Performance Tests", () => {
       console.log(
         `  Request ${index + 1}: ${result.success ? "✅" : "❌"} Success (${
           result.statusCode
-        }) - ${result.responseTime}ms`
+        }) - ${result.responseTime}ms`,
       );
       if (result.success) {
         successCount++;
@@ -159,24 +170,26 @@ describe("Chat API Performance Tests", () => {
 
     console.log(
       `📊 Success rate: ${successCount}/${concurrency} (${successRate.toFixed(
-        1
-      )}%)`
+        1,
+      )}%)`,
     );
     console.log(`📊 Average response time: ${avgResponseTime.toFixed(0)}ms`);
 
     assert.ok(
       successRate >= 80,
-      `Success rate ${successRate}% is too low (<80%)`
+      `Success rate ${successRate}% is too low (<80%)`,
     );
     assert.ok(
       avgResponseTime < 8000,
-      `Average response time ${avgResponseTime}ms is too slow (>8s)`
+      `Average response time ${avgResponseTime}ms is too slow (>8s)`,
     );
   });
 
   test("should handle large content efficiently", async () => {
     if (!isAuthAvailable()) {
-      console.log("⚠️ Skipping performance test - auth credentials not configured");
+      console.log(
+        "⚠️ Skipping performance test - auth credentials not configured",
+      );
       return;
     }
 
@@ -190,11 +203,11 @@ describe("Chat API Performance Tests", () => {
           content: largeContent,
         },
       ],
-      { max_tokens: 100 }
+      { max_tokens: 100 },
     );
 
     console.log(
-      `📏 Large content test (${largeContent.length} chars): ${metrics.responseTime}ms`
+      `📏 Large content test (${largeContent.length} chars): ${metrics.responseTime}ms`,
     );
     if (metrics.usage) {
       console.log(`📊 Token usage:`, metrics.usage);
@@ -204,13 +217,15 @@ describe("Chat API Performance Tests", () => {
     assert.strictEqual(metrics.success, true);
     assert.ok(
       metrics.responseTime < 15000,
-      `Large content response time ${metrics.responseTime}ms is too slow (>15s)`
+      `Large content response time ${metrics.responseTime}ms is too slow (>15s)`,
     );
   });
 
   test("should handle streaming responses efficiently", async () => {
     if (!isAuthAvailable()) {
-      console.log("⚠️ Skipping performance test - auth credentials not configured");
+      console.log(
+        "⚠️ Skipping performance test - auth credentials not configured",
+      );
       return;
     }
 
@@ -246,7 +261,7 @@ describe("Chat API Performance Tests", () => {
     assert.strictEqual(response.status, 200);
     assert.ok(
       initialResponseTime < 5000,
-      `Streaming initial response time ${initialResponseTime}ms is too slow (>5s)`
+      `Streaming initial response time ${initialResponseTime}ms is too slow (>5s)`,
     );
 
     // Read the stream to completion
@@ -270,11 +285,11 @@ describe("Chat API Performance Tests", () => {
               if (data === "[DONE]") {
                 const totalStreamTime = Date.now() - streamStartTime;
                 console.log(
-                  `📊 Streaming completed: ${chunkCount} chunks in ${totalStreamTime}ms`
+                  `📊 Streaming completed: ${chunkCount} chunks in ${totalStreamTime}ms`,
                 );
                 assert.ok(
                   totalStreamTime < 10000,
-                  `Total streaming time ${totalStreamTime}ms is too slow (>10s)`
+                  `Total streaming time ${totalStreamTime}ms is too slow (>10s)`,
                 );
                 return;
               }
@@ -289,7 +304,9 @@ describe("Chat API Performance Tests", () => {
 
   test("should maintain performance under different temperature settings", async () => {
     if (!isAuthAvailable()) {
-      console.log("⚠️ Skipping performance test - auth credentials not configured");
+      console.log(
+        "⚠️ Skipping performance test - auth credentials not configured",
+      );
       return;
     }
 
@@ -307,7 +324,7 @@ describe("Chat API Performance Tests", () => {
         {
           temperature: temp,
           max_tokens: 30,
-        }
+        },
       );
 
       console.log(`🌡️ Temperature ${temp}: ${metrics.responseTime}ms`);
@@ -321,7 +338,7 @@ describe("Chat API Performance Tests", () => {
     const avgTime =
       results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
     const maxDeviation = Math.max(
-      ...results.map((r) => Math.abs(r.responseTime - avgTime))
+      ...results.map((r) => Math.abs(r.responseTime - avgTime)),
     );
 
     console.log(`📊 Average response time: ${avgTime.toFixed(0)}ms`);
@@ -329,13 +346,15 @@ describe("Chat API Performance Tests", () => {
 
     assert.ok(
       maxDeviation < avgTime * 0.5,
-      `Response time variation too high: ${maxDeviation}ms vs avg ${avgTime}ms`
+      `Response time variation too high: ${maxDeviation}ms vs avg ${avgTime}ms`,
     );
   });
 
   test("should handle rate limiting gracefully", async () => {
     if (!isAuthAvailable()) {
-      console.log("⚠️ Skipping performance test - auth credentials not configured");
+      console.log(
+        "⚠️ Skipping performance test - auth credentials not configured",
+      );
       return;
     }
 
@@ -349,7 +368,11 @@ describe("Chat API Performance Tests", () => {
     ];
     const options = { max_tokens: 20 };
 
-    const results = await runConcurrentAuthenticatedRequests(messages, options, rapidRequests);
+    const results = await runConcurrentAuthenticatedRequests(
+      messages,
+      options,
+      rapidRequests,
+    );
 
     let successCount = 0;
     let rateLimitCount = 0;
@@ -361,7 +384,7 @@ describe("Chat API Performance Tests", () => {
       } else if (result.success) {
         successCount++;
         console.log(
-          `  Request ${index + 1}: ✅ Success (${result.responseTime}ms)`
+          `  Request ${index + 1}: ✅ Success (${result.responseTime}ms)`,
         );
       } else {
         console.log(`  Request ${index + 1}: ❌ Failed (${result.statusCode})`);
@@ -369,13 +392,13 @@ describe("Chat API Performance Tests", () => {
     });
 
     console.log(
-      `📊 Rapid requests: ${successCount} success, ${rateLimitCount} rate limited`
+      `📊 Rapid requests: ${successCount} success, ${rateLimitCount} rate limited`,
     );
 
     // At least some requests should succeed, and rate limiting should be handled gracefully
     assert.ok(
       successCount > 0 || rateLimitCount > 0,
-      "No requests succeeded or were rate limited"
+      "No requests succeeded or were rate limited",
     );
   });
 });

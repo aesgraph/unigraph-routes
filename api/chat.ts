@@ -38,7 +38,7 @@ interface ChatResponse {
 
 export default async function handler(
   req: AuthenticatedRequest,
-  res: VercelResponse
+  res: VercelResponse,
 ) {
   // Configure CORS headers
   const preflightHandled = configureCORS(req, res);

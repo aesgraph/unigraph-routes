@@ -3,10 +3,7 @@
 
 import { test, describe } from "node:test";
 import * as assert from "node:assert";
-import { 
-  getAuthToken,
-  isAuthAvailable 
-} from "./test-utils.js";
+import { getAuthToken, isAuthAvailable } from "./test-utils.js";
 
 const CHAT_BASE_URL: string = process.env.BASE_URL || "http://localhost:3000";
 
@@ -26,7 +23,9 @@ interface ChatRequest {
 describe("Chat API Streaming Tests", () => {
   test("should handle streaming responses with authentication", async () => {
     if (!isAuthAvailable()) {
-      console.log("⚠️ Skipping streaming test - auth credentials not configured");
+      console.log(
+        "⚠️ Skipping streaming test - auth credentials not configured",
+      );
       return;
     }
 
@@ -63,7 +62,9 @@ describe("Chat API Streaming Tests", () => {
 
   test("should handle non-streaming responses when stream is false with auth", async () => {
     if (!isAuthAvailable()) {
-      console.log("⚠️ Skipping streaming test - auth credentials not configured");
+      console.log(
+        "⚠️ Skipping streaming test - auth credentials not configured",
+      );
       return;
     }
 
