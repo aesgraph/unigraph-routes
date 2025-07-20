@@ -132,8 +132,8 @@ async function main() {
     log("Please add these to your .env file or enter them manually.");
 
     // For now, use defaults
-    testEmail = "dev@gmail.com";
-    testPassword = "dev123456";
+    testEmail = "user@example.com"; //pragma: allowlist secret
+    testPassword = "password123"; //pragma: allowlist secret
     log(`Using default credentials: ${testEmail}`, "yellow");
   }
 

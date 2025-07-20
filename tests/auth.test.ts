@@ -283,8 +283,8 @@ describe("Auth API Tests", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: "test@example.com",
-        password: "testpassword123",
+        email: EXAMPLE_EMAIL,
+        password: EXAMPLE_PASSWORD,
         action: "signin",
       }),
     });
