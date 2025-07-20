@@ -1,6 +1,9 @@
 // Node.js built-in test runner
 // Run with: node --test tests/auth.test.ts
 
+// TODO: Mock requests so we get unique error responses instead of login issues
+// Use integration tests instead to test auth flow.
+
 import { test, describe } from "node:test";
 import * as assert from "node:assert";
 
@@ -58,7 +61,7 @@ describe("Auth API Tests", () => {
 
     if (response.status === 401) {
       console.log(
-        "⚠️ Auth failed - invalid credentials (expected in test environment)",
+        "⚠️ Auth failed - invalid credentials (expected in test environment)"
       );
       assert.strictEqual(data.success, false);
       assert.ok(data.error);
@@ -198,7 +201,7 @@ describe("Auth API Tests", () => {
       },
       body: JSON.stringify({
         email: "invalid-email",
-        password: "testpassword123",
+        password: EXAMPLE_PASSWORD,
         action: "signin",
       }),
     });
@@ -239,8 +242,8 @@ describe("Auth API Tests", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: "test@example.com",
-        password: "testpassword123",
+        email: EXAMPLE_EMAIL,
+        password: EXAMPLE_PASSWORD,
       }),
     });
 
