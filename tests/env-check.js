@@ -16,7 +16,7 @@ async function getAuthToken() {
   }
 
   try {
-    const response = await fetch(`${baseUrl}/api/auth`, {
+    const response = await fetch(`${baseUrl}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,7 +29,9 @@ async function getAuthToken() {
     });
 
     const data = await response.json();
-    return data.success && data.tokens?.access_token ? data.tokens.access_token : null;
+    return data.success && data.tokens?.access_token
+      ? data.tokens.access_token
+      : null;
   } catch (error) {
     console.error("Auth error:", error);
     return null;
@@ -46,19 +48,19 @@ async function checkEnvironment() {
 
   // Check required environment variables
   const requiredVars = [
-    'BASE_URL',
-    'TEST_EMAIL', 
-    'TEST_PASSWORD',
-    'APPROVED_USERS',
-    'SUPABASE_URL',
-    'SUPABASE_ANON_KEY'
+    "BASE_URL",
+    "TEST_EMAIL",
+    "TEST_PASSWORD",
+    "APPROVED_USERS",
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
   ];
 
   console.log("\n📋 Environment Variables:");
   for (const varName of requiredVars) {
     const value = process.env[varName];
     if (value) {
-      if (varName.includes('PASSWORD') || varName.includes('KEY')) {
+      if (varName.includes("PASSWORD") || varName.includes("KEY")) {
         console.log(`  ✅ ${varName}: [HIDDEN]`);
       } else {
         console.log(`  ✅ ${varName}: ${value}`);
@@ -69,20 +71,22 @@ async function checkEnvironment() {
   }
 
   console.log("\n🔐 Authentication Test:");
-  
+
   if (!isAuthAvailable()) {
-    console.log("  ❌ Authentication not available - missing TEST_EMAIL or TEST_PASSWORD");
+    console.log(
+      "  ❌ Authentication not available - missing TEST_EMAIL or TEST_PASSWORD"
+    );
     return;
   }
 
   try {
     console.log("  🔄 Attempting to get auth token...");
     const token = await getAuthToken();
-    
+
     if (token) {
       console.log("  ✅ Successfully obtained auth token");
       console.log(`  📝 Token preview: ${token.substring(0, 20)}...`);
-      
+
       // Test the token with a simple request
       console.log("  🧪 Testing token with API call...");
       const baseUrl = process.env.BASE_URL || "http://localhost:3000";
@@ -104,14 +108,15 @@ async function checkEnvironment() {
       });
 
       const data = await response.json();
-      
+
       if (response.status === 200 && data.success) {
         console.log("  ✅ Token works! API responded successfully");
         console.log(`  📊 Response: ${data.message?.substring(0, 50)}...`);
       } else {
-        console.log(`  ❌ Token validation failed: ${response.status} - ${data.error}`);
+        console.log(
+          `  ❌ Token validation failed: ${response.status} - ${data.error}`
+        );
       }
-      
     } else {
       console.log("  ❌ Failed to obtain auth token");
     }

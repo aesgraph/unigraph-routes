@@ -49,6 +49,13 @@ run_test() {
     echo -e "${BLUE}Running $test_name...${NC}"
     echo "----------------------------------------"
     
+    # Check if file exists
+    if [ ! -f "$test_file" ]; then
+        echo -e "${RED}Could not find '$test_file'${NC}"
+        echo -e "${RED}❌ $test_name FAILED${NC}"
+        return 1
+    fi
+    
     # Check if it's a TypeScript file and use tsx, otherwise use node
     if [[ "$test_file" == *.ts ]]; then
         if npx tsx --test "$test_file"; then

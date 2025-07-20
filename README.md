@@ -5,12 +5,15 @@ Node.js + Vercel API routes for the Unigraph project, including authentication a
 ## Available APIs
 
 ### `/api/hello` - Hello World
+
 Simple example endpoint that returns a greeting message.
 
-### `/api/auth` - Authentication
+### `/api/login` - Authentication
+
 Handles user authentication using Supabase, supporting both sign-in and sign-up operations.
 
 ### `/api/chat` - ChatGPT Integration
+
 Interface to interact with OpenAI's ChatGPT models. Supports both streaming and non-streaming responses.
 
 ## Setup

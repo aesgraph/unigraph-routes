@@ -29,7 +29,7 @@ interface AuthResponse {
 
 describe("Auth API Tests", () => {
   test("should handle signin with valid credentials", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -74,7 +74,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should handle signup with valid credentials", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -97,7 +97,11 @@ describe("Auth API Tests", () => {
     }
 
     // Handle various expected error scenarios for signup
-    if (response.status === 400 || response.status === 409 || response.status === 500) {
+    if (
+      response.status === 400 ||
+      response.status === 409 ||
+      response.status === 500
+    ) {
       console.log(
         "⚠️ Signup failed (user may already exist or other validation failed)"
       );
@@ -119,14 +123,18 @@ describe("Auth API Tests", () => {
       assert.ok(data.expires_at);
     } else {
       // Log unexpected status for debugging
-      console.log(`⚠️ Unexpected signup response: ${response.status} - ${data.error}`);
-      assert.ok([200, 400, 409, 500].includes(response.status), 
-        `Unexpected status code: ${response.status}`);
+      console.log(
+        `⚠️ Unexpected signup response: ${response.status} - ${data.error}`
+      );
+      assert.ok(
+        [200, 400, 409, 500].includes(response.status),
+        `Unexpected status code: ${response.status}`
+      );
     }
   });
 
   test("should reject missing email", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -154,7 +162,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should reject missing password", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -182,7 +190,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should reject empty email", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -211,7 +219,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should reject empty password", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -240,7 +248,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should reject invalid email format", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -270,7 +278,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should reject weak password", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -300,7 +308,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should reject GET requests", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "GET",
     });
 
@@ -312,7 +320,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should reject PUT requests", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -331,7 +339,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should reject DELETE requests", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "DELETE",
     });
 
@@ -343,7 +351,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should handle OPTIONS requests (CORS preflight)", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "OPTIONS",
     });
 
@@ -356,7 +364,7 @@ describe("Auth API Tests", () => {
   test("should handle missing Supabase configuration gracefully", async () => {
     // This test will pass if Supabase is not configured
     // In a real environment, you might temporarily unset the env vars for this test
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -385,7 +393,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should handle malformed JSON gracefully", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -398,7 +406,7 @@ describe("Auth API Tests", () => {
   });
 
   test("should handle missing Content-Type header", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       body: JSON.stringify({
         email: process.env.TEST_EMAIL || "test@example.com",
@@ -436,7 +444,7 @@ describe("Auth API Tests", () => {
 
   test("should handle very long email addresses", async () => {
     const longEmail = "a".repeat(100) + "@example.com";
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -468,7 +476,7 @@ describe("Auth API Tests", () => {
 
   test("should handle very long passwords", async () => {
     const longPassword = "a".repeat(1000);
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
