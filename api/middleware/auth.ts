@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
+import { getEnvVar } from "../utils/envUtils.js";
 
 interface AuthenticatedRequest extends VercelRequest {
   user?: {
@@ -10,7 +11,7 @@ interface AuthenticatedRequest extends VercelRequest {
 }
 
 // Whitelist of approved user emails from environment variable
-const APPROVED_USERS = (process.env.APPROVED_USERS || "")
+const APPROVED_USERS = (getEnvVar("APPROVED_USERS") || "")
   .split(",")
   .map((email) => email.trim())
   .filter(Boolean);
@@ -20,8 +21,8 @@ export async function authenticateUser(
   res: VercelResponse
 ): Promise<boolean> {
   // If the whitelist is not set, handle based on environment
-  if (!process.env.APPROVED_USERS || APPROVED_USERS.length === 0) {
-    if (process.env.NODE_ENV === "development") {
+  if (!getEnvVar("APPROVED_USERS") || APPROVED_USERS.length === 0) {
+    if (getEnvVar("NODE_ENV") === "development") {
       console.warn(
         "Warning: APPROVED_USERS is not set. Bypassing user approval check in development mode."
       );
@@ -52,8 +53,8 @@ export async function authenticateUser(
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
     // Initialize Supabase client
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+    const supabaseUrl = getEnvVar("SUPABASE_URL");
+    const supabaseKey = getEnvVar("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !supabaseKey) {
       res.status(500).json({
@@ -81,8 +82,8 @@ export async function authenticateUser(
 
     // Whitelist check (skip in development if APPROVED_USERS not set)
     const bypassWhitelist =
-      process.env.NODE_ENV === "development" &&
-      (!process.env.APPROVED_USERS || APPROVED_USERS.length === 0);
+      getEnvVar("NODE_ENV") === "development" &&
+      (!getEnvVar("APPROVED_USERS") || APPROVED_USERS.length === 0);
 
     if (
       !bypassWhitelist &&

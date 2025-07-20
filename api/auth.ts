@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
 import { configureCORS } from "./middleware/cors.js";
+import { getEnvVar } from "./utils/envUtils.js";
 
 // Type definitions
 interface AuthRequest {
@@ -41,8 +42,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Initialize Supabase client
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+    const supabaseUrl = getEnvVar("SUPABASE_URL");
+    const supabaseKey = getEnvVar("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !supabaseKey) {
       return res.status(500).json({

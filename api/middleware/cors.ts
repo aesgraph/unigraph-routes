@@ -1,15 +1,38 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 /**
- * Configure CORS headers based on environment variables
+ * Get environment variable from multiple sources in order of preference
+ * 1. Vercel runtime environment variables
+ * 2. Process.env (fallback)
+ */
+function getEnvVar(key: string): string | undefined {
+  // Try Vercel runtime environment variables first
+  if (typeof process !== "undefined" && process.env) {
+    return process.env[key];
+  }
+  return undefined;
+}
+
+/**
+ * Check if we're running on Vercel
+ */
+function isVercel(): boolean {
+  return !!getEnvVar("VERCEL_URL") || !!getEnvVar("VERCEL_ENV");
+}
+
+/**
+ * Configure CORS headers based on environment variables and Vercel deployment
  * Environment variables:
  * - ALLOWED_ORIGINS: Comma-separated list of allowed origins
  * - CORS_ALLOW_ALL: Set to 'true' to allow all origins
+ * - VERCEL_URL: Automatically set by Vercel (e.g., 'unigraph-routes-avl8sp19f-aesgraph.vercel.app')
  */
 export function configureCORS(req: VercelRequest, res: VercelResponse) {
   // Get allowed origins from environment variable
-  const allowedOriginsEnv = process.env.ALLOWED_ORIGINS;
-  const corsAllowAll = process.env.CORS_ALLOW_ALL === "true";
+  const allowedOriginsEnv = getEnvVar("ALLOWED_ORIGINS");
+  const corsAllowAll = getEnvVar("CORS_ALLOW_ALL") === "true";
+  const vercelUrl = getEnvVar("VERCEL_URL");
+  const vercelEnv = getEnvVar("VERCEL_ENV");
 
   let allowedOrigins: string[] = [];
 
@@ -21,27 +44,46 @@ export function configureCORS(req: VercelRequest, res: VercelResponse) {
     allowedOrigins = allowedOriginsEnv
       .split(",")
       .map((origin) => origin.trim());
-
-    const origin = req.headers.origin;
-    if (origin && allowedOrigins.includes(origin)) {
-      res.setHeader("Access-Control-Allow-Origin", origin);
-    } else {
-      // Fallback to first allowed origin or wildcard
-      res.setHeader("Access-Control-Allow-Origin", allowedOrigins[0] || "*");
-    }
   } else {
-    // Default fallback - allow all (less secure, but functional)
+    // Default fallback - start with localhost
+    allowedOrigins = ["http://localhost:3000"];
+  }
+
+  // Add Vercel deployment URL if available
+  if (vercelUrl) {
+    const vercelOrigin = `https://${vercelUrl}`;
+    if (!allowedOrigins.includes(vercelOrigin)) {
+      allowedOrigins.push(vercelOrigin);
+    }
+  }
+
+  // Add Vercel preview URLs if in preview environment
+  if (vercelEnv === "preview" && vercelUrl) {
+    const previewOrigin = `https://${vercelUrl}`;
+    if (!allowedOrigins.includes(previewOrigin)) {
+      allowedOrigins.push(previewOrigin);
+    }
+  }
+
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else if (allowedOrigins.length > 0) {
+    // Fallback to first allowed origin
+    res.setHeader("Access-Control-Allow-Origin", allowedOrigins[0]);
+  } else {
+    // Final fallback - allow all (less secure, but functional)
     res.setHeader("Access-Control-Allow-Origin", "*");
   }
 
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS",
+    "GET, POST, PUT, DELETE, OPTIONS"
   );
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With",
+    "Content-Type, Authorization, X-Requested-With"
   );
 
   // Handle preflight requests

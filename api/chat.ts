@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import OpenAI from "openai";
 import { authenticateUser } from "./middleware/auth.js";
 import { configureCORS } from "./middleware/cors.js";
+import { getEnvVar } from "./utils/envUtils.js";
 
 interface AuthenticatedRequest extends VercelRequest {
   user?: {
@@ -38,7 +39,7 @@ interface ChatResponse {
 
 export default async function handler(
   req: AuthenticatedRequest,
-  res: VercelResponse,
+  res: VercelResponse
 ) {
   // Configure CORS headers
   const preflightHandled = configureCORS(req, res);
@@ -62,7 +63,7 @@ export default async function handler(
 
   try {
     // Check for OpenAI API key
-    const openaiApiKey = process.env.OPENAI_API_KEY;
+    const openaiApiKey = getEnvVar("OPENAI_API_KEY");
     if (!openaiApiKey) {
       return res.status(500).json({
         success: false,
