@@ -16,7 +16,7 @@ async function getAuthToken() {
   }
 
   try {
-    const response = await fetch(`${baseUrl}/api/login`, {
+    const response = await fetch(`${baseUrl}/api/auth`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

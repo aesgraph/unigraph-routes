@@ -8,7 +8,7 @@ Node.js + Vercel API routes for the Unigraph project, including authentication a
 
 Simple example endpoint that returns a greeting message.
 
-### `/api/login` - Authentication
+### `/api/auth` - Authentication
 
 Handles user authentication using Supabase, supporting both sign-in and sign-up operations.
 

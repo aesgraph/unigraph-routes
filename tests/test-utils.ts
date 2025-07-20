@@ -61,7 +61,7 @@ export async function getAuthToken(): Promise<string | null> {
   }
 
   try {
-    const response = await fetch(`${BASE_URL}/api/login`, {
+    const response = await fetch(`${BASE_URL}/api/auth`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

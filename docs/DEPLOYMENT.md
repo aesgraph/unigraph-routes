@@ -44,7 +44,7 @@ TEST_PASSWORD=your-test-password
    ```
 
 3. **Test the Deployed Endpoints**:
-   - Auth endpoint: `https://your-domain.vercel.app/api/login`
+   - Auth endpoint: `https://your-domain.vercel.app/api/auth`
    - Chat endpoint: `https://your-domain.vercel.app/api/chat`
    - Hello endpoint: `https://your-domain.vercel.app/api/hello`
 
@@ -56,7 +56,7 @@ TEST_PASSWORD=your-test-password
 - **Authentication**: None required
 - **Usage**: Test if the API is running
 
-### 🔐 `/api/login` (POST)
+### 🔐 `/api/auth` (POST)
 
 - **Purpose**: User authentication (signin/signup)
 - **Authentication**: None required for this endpoint

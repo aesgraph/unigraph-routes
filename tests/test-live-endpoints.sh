@@ -31,7 +31,7 @@ TEST_EMAIL=${TEST_EMAIL:-dev@gmail.com}
 echo "Enter your test password:"
 read -s TEST_PASSWORD
 
-TOKEN_RESPONSE=$(curl -X POST "$LIVE_URL/api/login" \
+TOKEN_RESPONSE=$(curl -X POST "$LIVE_URL/api/auth" \
   -H "Content-Type: application/json" \
   -d "{\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
   -s)

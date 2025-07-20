@@ -1,5 +1,5 @@
 // Example usage of the Auth API
-// This file demonstrates how to interact with the /api/login endpoint
+// This file demonstrates how to interact with the /api/auth endpoint
 
 // Load environment variables from .env file
 import dotenv from "dotenv";
@@ -31,7 +31,7 @@ interface AuthResponse {
 // Example 1: Sign in with your credentials
 async function signInExample() {
   try {
-    const response = await fetch(`${BASE_URL}/api/login`, {
+    const response = await fetch(`${BASE_URL}/api/auth`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +73,7 @@ async function signInExample() {
 // Example 2: Sign up with new credentials
 async function signUpExample() {
   try {
-    const response = await fetch(`${BASE_URL}/api/login`, {
+    const response = await fetch(`${BASE_URL}/api/auth`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -125,7 +125,7 @@ async function signInWithEnvVars() {
   }
 
   try {
-    const response = await fetch(`${BASE_URL}/api/login`, {
+    const response = await fetch(`${BASE_URL}/api/auth`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

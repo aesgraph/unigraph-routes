@@ -15,7 +15,7 @@ curl -X GET "$LIVE_URL/api/hello" \
 ## 2. Get Authentication Token
 ```bash
 # Replace with your actual credentials
-curl -X POST "$LIVE_URL/api/login" \
+curl -X POST "$LIVE_URL/api/auth" \
   -H "Content-Type: application/json" \
   -d '{"email":"dev@gmail.com","password":"YOUR_PASSWORD"}' \
   -v
@@ -93,7 +93,7 @@ curl -s "$LIVE_URL/api/hello" | head -c 100
 
 # Auth endpoint (with dummy data - will fail but should return proper error)
 echo -e "\n\nTesting Auth..."
-curl -s -X POST "$LIVE_URL/api/login" \
+curl -s -X POST "$LIVE_URL/api/auth" \
   -H "Content-Type: application/json" \
   -d '{"email":"test","password":"test"}' | head -c 100
 

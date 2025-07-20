@@ -66,7 +66,7 @@ describe("Chat API Integration Tests", () => {
   });
 
   test("should handle authentication endpoints", async () => {
-    const response = await fetch(`${CHAT_BASE_URL}/api/login`, {
+    const response = await fetch(`${CHAT_BASE_URL}/api/auth`, {
       method: "GET",
     });
 
