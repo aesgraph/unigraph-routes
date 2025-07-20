@@ -22,7 +22,11 @@ export async function authenticateUser(
   // If the whitelist is not set, handle based on environment
   if (!process.env.APPROVED_USERS || APPROVED_USERS.length === 0) {
     if (process.env.NODE_ENV === "development") {
-      console.warn("Warning: APPROVED_USERS is not set. Bypassing user approval check in development mode.");
+      console.warn(
+        "Warning: APPROVED_USERS is not set. Bypassing user approval check in development mode."
+      );
+      // In development mode, we still require authentication but skip whitelist
+      const bypassWhitelist = true;
     } else {
       res.status(500).json({
         success: false,
@@ -75,11 +79,32 @@ export async function authenticateUser(
       return false;
     }
 
-    // Whitelist check
-    if (!user.email || !APPROVED_USERS.includes(user.email)) {
-      res.status(403).json({
-        success: false,
-        error: "User is not approved to use this endpoint.",
+    // Whitelist check (skip in development if APPROVED_USERS not set)
+    const bypassWhitelist =
+      process.env.NODE_ENV === "development" &&
+      (!process.env.APPROVED_USERS || APPROVED_USERS.length === 0);
+
+    if (
+      !bypassWhitelist &&
+      (!user.email || !APPROVED_USERS.includes(user.email))
+    ) {
+      // Return a custom response that mimics the chat API format
+      res.status(200).json({
+        choices: [
+          {
+            message: {
+              role: "assistant",
+              content:
+                "I'm sorry, but you don't have access to this chat feature yet. Please email aesgraph@gmail.com to request access. I'll be happy to help you once you're approved!",
+            },
+            finish_reason: "stop",
+          },
+        ],
+        usage: {
+          prompt_tokens: 0,
+          completion_tokens: 0,
+          total_tokens: 0,
+        },
       });
       return false;
     }
