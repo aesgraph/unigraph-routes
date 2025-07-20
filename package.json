@@ -1,10 +1,25 @@
 {
+  "type": "module",
   "repository": "https://github.com/vercel/examples.git",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "test": "./tests/run-tests.sh all",
+    "test:unit": "./tests/run-tests.sh unit",
+    "test:streaming": "./tests/run-tests.sh streaming",
+    "test:performance": "./tests/run-tests.sh performance",
+    "test:integration": "./tests/run-tests.sh integration",
+    "test:auth": "./tests/run-tests.sh auth"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.4",
+    "dotenv": "^17.2.0",
+    "openai": "^4.104.0"
+  },
   "devDependencies": {
-    "@types/node": "^17.0.42",
+    "@types/node": "^20.0.0",
     "@vercel/node": "^2.9.6",
-    "typescript": "^4.7.3"
+    "tsx": "^4.20.3",
+    "typescript": "^5.0.0"
   }
 }

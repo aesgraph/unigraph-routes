@@ -1,6 +1,42 @@
-# Node.js Hello World
+# Unigraph API Routes
 
-Simple Node.js + Vercel example that returns a "Hello World" response.
+Node.js + Vercel API routes for the Unigraph project, including authentication and AI chat capabilities.
+
+## Available APIs
+
+### `/api/hello` - Hello World
+Simple example endpoint that returns a greeting message.
+
+### `/api/auth` - Authentication
+Handles user authentication using Supabase, supporting both sign-in and sign-up operations.
+
+### `/api/chat` - ChatGPT Integration
+Interface to interact with OpenAI's ChatGPT models. Supports both streaming and non-streaming responses.
+
+## Setup
+
+### Environment Variables
+
+Create a `.env.local` file with the following variables:
+
+```bash
+# Supabase Configuration
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# OpenAI Configuration
+OPENAI_API_KEY=your_openai_api_key
+```
+
+### Installation
+
+```bash
+npm install
+```
+
+## Documentation
+
+- [Chat API Documentation](./api/CHAT_API.md) - Detailed guide for using the ChatGPT integration
 
 ## How to Use
 

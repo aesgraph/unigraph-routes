@@ -1,0 +1,130 @@
+{
+  "info": {
+    "name": "Chat API Tests",
+    "description": "Collection for testing the ChatGPT API endpoints",
+    "version": "1.0.0"
+  },
+  "requests": [
+    {
+      "name": "Basic Chat Request",
+      "method": "POST",
+      "url": "{{base_url}}/api/chat",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Say hello in a friendly way\"\n    }\n  ],\n  \"max_tokens\": 50\n}"
+      },
+      "tests": [
+        "pm.test(\"Status code is 200\", function () {",
+        "    pm.response.to.have.status(200);",
+        "});",
+        "",
+        "pm.test(\"Response has success field\", function () {",
+        "    var jsonData = pm.response.json();",
+        "    pm.expect(jsonData).to.have.property('success');",
+        "});",
+        "",
+        "pm.test(\"Response has message field when successful\", function () {",
+        "    var jsonData = pm.response.json();",
+        "    if (jsonData.success) {",
+        "        pm.expect(jsonData).to.have.property('message');",
+        "    }",
+        "});"
+      ]
+    },
+    {
+      "name": "Chat with System Prompt",
+      "method": "POST",
+      "url": "{{base_url}}/api/chat",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful coding assistant. Keep responses brief.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"What is React?\"\n    }\n  ],\n  \"temperature\": 0.3,\n  \"max_tokens\": 100\n}"
+      }
+    },
+    {
+      "name": "Multi-turn Conversation",
+      "method": "POST",
+      "url": "{{base_url}}/api/chat",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful assistant that remembers context.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"My name is Alice and I'm learning programming.\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Hello Alice! It's great to meet you. Programming is an exciting field to learn. What programming language are you starting with?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"What should I focus on first?\"\n    }\n  ]\n}"
+      }
+    },
+    {
+      "name": "Streaming Response",
+      "method": "POST",
+      "url": "{{base_url}}/api/chat",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Tell me a very short story\"\n    }\n  ],\n  \"stream\": true,\n  \"max_tokens\": 100\n}"
+      }
+    },
+    {
+      "name": "Error Test - Empty Messages",
+      "method": "POST",
+      "url": "{{base_url}}/api/chat",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"messages\": []\n}"
+      },
+      "tests": [
+        "pm.test(\"Status code is 400\", function () {",
+        "    pm.response.to.have.status(400);",
+        "});",
+        "",
+        "pm.test(\"Response indicates failure\", function () {",
+        "    var jsonData = pm.response.json();",
+        "    pm.expect(jsonData.success).to.be.false;",
+        "});"
+      ]
+    },
+    {
+      "name": "Error Test - Invalid Message Format",
+      "method": "POST",
+      "url": "{{base_url}}/api/chat",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"invalid_role\",\n      \"content\": \"This should fail\"\n    }\n  ]\n}"
+      },
+      "tests": [
+        "pm.test(\"Status code is 400\", function () {",
+        "    pm.response.to.have.status(400);",
+        "});"
+      ]
+    },
+    {
+      "name": "Error Test - Method Not Allowed",
+      "method": "GET",
+      "url": "{{base_url}}/api/chat",
+      "tests": [
+        "pm.test(\"Status code is 405\", function () {",
+        "    pm.response.to.have.status(405);",
+        "});"
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "description": "Base URL for the API"
+    }
+  ]
+}
