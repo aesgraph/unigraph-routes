@@ -9,7 +9,7 @@ const AUTH_BASE_URL: string = process.env.BASE_URL || "http://localhost:3000";
 interface AuthRequest {
   email: string;
   password: string;
-  action?: "signin" | "signup";
+  action?: "signin";
 }
 
 interface AuthResponse {
@@ -71,66 +71,6 @@ describe("Auth API Tests", () => {
     assert.ok(data.tokens.access_token);
     assert.ok(data.tokens.refresh_token);
     assert.ok(data.expires_at);
-  });
-
-  test("should handle signup with valid credentials", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: "newuser@gmail.com",
-        password: "newpassword123",
-        action: "signup",
-      }),
-    });
-
-    const data: AuthResponse = await response.json();
-
-    if (
-      response.status === 500 &&
-      data.error?.includes("Missing Supabase configuration")
-    ) {
-      console.log("⚠️ Skipping auth test - Supabase not configured");
-      return;
-    }
-
-    // Handle various expected error scenarios for signup
-    if (
-      response.status === 400 ||
-      response.status === 409 ||
-      response.status === 500
-    ) {
-      console.log(
-        "⚠️ Signup failed (user may already exist or other validation failed)"
-      );
-      console.log(`   Status: ${response.status}, Error: ${data.error}`);
-      assert.strictEqual(data.success, false);
-      assert.ok(data.error);
-      return;
-    }
-
-    // If signup succeeded
-    if (response.status === 200) {
-      assert.strictEqual(data.success, true);
-      assert.ok(data.user);
-      assert.ok(data.user.id);
-      assert.ok(data.user.email);
-      assert.ok(data.tokens);
-      assert.ok(data.tokens.access_token);
-      assert.ok(data.tokens.refresh_token);
-      assert.ok(data.expires_at);
-    } else {
-      // Log unexpected status for debugging
-      console.log(
-        `⚠️ Unexpected signup response: ${response.status} - ${data.error}`
-      );
-      assert.ok(
-        [200, 400, 409, 500].includes(response.status),
-        `Unexpected status code: ${response.status}`
-      );
-    }
   });
 
   test("should reject missing email", async () => {
@@ -257,36 +197,6 @@ describe("Auth API Tests", () => {
         email: "invalid-email",
         password: "testpassword123",
         action: "signin",
-      }),
-    });
-
-    const data: AuthResponse = await response.json();
-
-    // If Supabase is not configured, we'll get a 500 error
-    if (
-      response.status === 500 &&
-      data.error?.includes("Missing Supabase configuration")
-    ) {
-      console.log("⚠️ Skipping validation test - Supabase not configured");
-      return;
-    }
-
-    // This might return 400 or 401 depending on Supabase validation
-    assert.ok([400, 401].includes(response.status));
-    assert.strictEqual(data.success, false);
-    assert.ok(data.error);
-  });
-
-  test("should reject weak password", async () => {
-    const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: "test@example.com",
-        password: "123",
-        action: "signup",
       }),
     });
 

@@ -58,17 +58,24 @@ TEST_PASSWORD=your-test-password
 
 ### 🔐 `/api/auth` (POST)
 
-- **Purpose**: User authentication (signin/signup)
+- **Purpose**: User authentication (signin only)
 - **Authentication**: None required for this endpoint
 - **Body**:
   ```json
   {
     "email": "user@example.com",
     "password": "password123",
-    "action": "signin" // or "signup"
+    "action": "signin"
   }
   ```
 - **Response**: Returns JWT tokens for authenticated requests
+- **Note**: Signup is **not** available via the API. All user registration must be done through the Unigraph app UI. If you attempt to use `"action": "signup"`, the API will return a 403 error:
+  ```json
+  {
+    "success": false,
+    "error": "Signup is only allowed through the Unigraph app. Programmatic signup is disabled."
+  }
+  ```
 
 ### 💬 `/api/chat` (POST)
 

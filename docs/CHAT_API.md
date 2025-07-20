@@ -30,7 +30,7 @@ OPENAI_API_KEY=your_openai_api_key_here
       "content": "You are a helpful assistant."
     },
     {
-      "role": "user", 
+      "role": "user",
       "content": "Hello, how are you?"
     }
   ],
@@ -94,19 +94,19 @@ data: [DONE]
 ### Basic Chat
 
 ```javascript
-const response = await fetch('/api/chat', {
-  method: 'POST',
+const response = await fetch("/api/chat", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
     messages: [
       {
-        role: 'user',
-        content: 'What is the capital of France?'
-      }
-    ]
-  })
+        role: "user",
+        content: "What is the capital of France?",
+      },
+    ],
+  }),
 });
 
 const data = await response.json();
@@ -116,35 +116,35 @@ console.log(data.message);
 ### Streaming Chat
 
 ```javascript
-const response = await fetch('/api/chat', {
-  method: 'POST',
+const response = await fetch("/api/chat", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
     messages: [
       {
-        role: 'user',
-        content: 'Tell me a story'
-      }
+        role: "user",
+        content: "Tell me a story",
+      },
     ],
-    stream: true
-  })
+    stream: true,
+  }),
 });
 
 const reader = response.body.getReader();
 while (true) {
   const { done, value } = await reader.read();
   if (done) break;
-  
+
   const chunk = new TextDecoder().decode(value);
-  const lines = chunk.split('\n');
-  
+  const lines = chunk.split("\n");
+
   for (const line of lines) {
-    if (line.startsWith('data: ')) {
+    if (line.startsWith("data: ")) {
       const data = line.slice(6);
-      if (data === '[DONE]') break;
-      
+      if (data === "[DONE]") break;
+
       try {
         const parsed = JSON.parse(data);
         if (parsed.content) {
@@ -161,25 +161,26 @@ while (true) {
 ### With System Prompt
 
 ```javascript
-const response = await fetch('/api/chat', {
-  method: 'POST',
+const response = await fetch("/api/chat", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
     messages: [
       {
-        role: 'system',
-        content: 'You are a helpful coding assistant. Provide clear, concise answers about programming.'
+        role: "system",
+        content:
+          "You are a helpful coding assistant. Provide clear, concise answers about programming.",
       },
       {
-        role: 'user',
-        content: 'How do I create a React component?'
-      }
+        role: "user",
+        content: "How do I create a React component?",
+      },
     ],
-    model: 'gpt-4',
-    temperature: 0.5
-  })
+    model: "gpt-4",
+    temperature: 0.5,
+  }),
 });
 ```
 
@@ -199,9 +200,29 @@ Rate limits are determined by your OpenAI API plan. The API will return appropri
 ## Models
 
 Supported models include:
+
 - `gpt-3.5-turbo` (default)
 - `gpt-4`
 - `gpt-4-turbo-preview`
 - Other OpenAI chat models
 
 Check the OpenAI documentation for the latest available models and their capabilities.
+
+## Authentication
+
+All requests to the Chat API require authentication. Include a Bearer token in the Authorization header:
+
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+Get a token by calling the `/api/auth` endpoint with your credentials and `"action": "signin"`.
+
+> **Note:** Signup is **not** available via the API. All user registration must be done through the Unigraph app UI. If you attempt to use `"action": "signup"`, the API will return a 403 error:
+>
+> ```json
+> {
+>   "success": false,
+>   "error": "Signup is only allowed through the Unigraph app. Programmatic signup is disabled."
+> }
+> ```

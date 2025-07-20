@@ -73,39 +73,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    let authResult;
-
     if (action === "signup") {
-      // Handle user registration
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+      // Signup is not allowed via API
+      return res.status(403).json({
+        success: false,
+        error:
+          "Signup is only allowed through the Unigraph app. Programmatic signup is disabled.",
       });
-
-      if (error) {
-        return res.status(400).json({
-          success: false,
-          error: error.message,
-        });
-      }
-
-      authResult = data;
-    } else {
-      // Handle user sign in
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        return res.status(401).json({
-          success: false,
-          error: error.message,
-        });
-      }
-
-      authResult = data;
     }
+
+    // Only allow signin
+    let authResult;
+    // Handle user sign in
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return res.status(401).json({
+        success: false,
+        error: error.message,
+      });
+    }
+
+    authResult = data;
 
     // Check if user and session exist
     if (!authResult.user || !authResult.session) {
