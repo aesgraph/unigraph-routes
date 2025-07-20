@@ -152,7 +152,7 @@ Tests complete chat flows with authentication:
 **Run with:**
 
 ```bash
-node tests/integration.test.js
+node --test tests/integration.test.ts
 ```
 
 ### 5. `run-tests.sh` - Test Runner Script
