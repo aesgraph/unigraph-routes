@@ -314,7 +314,7 @@ describe("Auth API Tests", () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: `{"email": ${EXAMPLE_EMAIL}, "password": ${EXAMPLE_PASSWORD},}`, // Invalid JSON
+      body: `{"email": "${EXAMPLE_EMAIL}", "password": "${EXAMPLE_PASSWORD}"}`, // Invalid JSON
     });
 
     // Should return 400 or 500 for malformed JSON
