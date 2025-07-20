@@ -27,6 +27,9 @@ interface AuthResponse {
   error?: string;
 }
 
+const EXAMPLE_EMAIL = "user@email.com"; //pragma: allowlist secret
+const EXAMPLE_PASSWORD = "password123"; //pragma: allowlist secret
+
 describe("Auth API Tests", () => {
   test("should handle signin with valid credentials", async () => {
     const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
@@ -80,7 +83,7 @@ describe("Auth API Tests", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        password: "testpassword123",
+        password: EXAMPLE_PASSWORD,
         action: "signin",
       }),
     });
@@ -308,7 +311,7 @@ describe("Auth API Tests", () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: '{"email": "test@example.com", "password": "test123",}', // Invalid JSON
+      body: `{"email": ${EXAMPLE_EMAIL}, "password": ${EXAMPLE_PASSWORD},}`, // Invalid JSON
     });
 
     // Should return 400 or 500 for malformed JSON
@@ -319,8 +322,8 @@ describe("Auth API Tests", () => {
     const response = await fetch(`${AUTH_BASE_URL}/api/auth`, {
       method: "POST",
       body: JSON.stringify({
-        email: process.env.TEST_EMAIL || "test@example.com",
-        password: process.env.TEST_PASSWORD || "testpassword123",
+        email: process.env.TEST_EMAIL || EXAMPLE_EMAIL,
+        password: process.env.TEST_PASSWORD || EXAMPLE_PASSWORD,
         action: "signin",
       }),
     });

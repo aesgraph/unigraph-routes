@@ -7,8 +7,8 @@ dotenv.config();
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
-const EXAMPLE_EMAIL = "user@email.com";
-const EXAMPLE_PASSWORD = "password123";
+const EXAMPLE_EMAIL = "user@email.com"; //pragma: allowlist secret
+const EXAMPLE_PASSWORD = "password123"; //pragma: allowlist secret
 
 interface AuthRequest {
   email: string;
