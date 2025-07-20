@@ -1,6 +1,8 @@
 # API Testing Suite
 
-This directory contains comprehensive tests for all API routes includ**Run with:**
+This directory contains comprehensive tests for all API routes, including integration tests for authentication, data validation, and error handling.
+
+**Run with:**
 ```bash
 node --test tests/integration.test.ts
 ```
