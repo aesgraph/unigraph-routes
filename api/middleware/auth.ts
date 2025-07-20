@@ -19,13 +19,17 @@ export async function authenticateUser(
   req: AuthenticatedRequest,
   res: VercelResponse
 ): Promise<boolean> {
-  // If the whitelist is not set, fail all requests
+  // If the whitelist is not set, handle based on environment
   if (!process.env.APPROVED_USERS || APPROVED_USERS.length === 0) {
-    res.status(500).json({
-      success: false,
-      error: "APPROVED_USERS environment variable is not set. Access denied.",
-    });
-    return false;
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Warning: APPROVED_USERS is not set. Bypassing user approval check in development mode.");
+    } else {
+      res.status(500).json({
+        success: false,
+        error: "APPROVED_USERS environment variable is not set. Access denied.",
+      });
+      return false;
+    }
   }
 
   try {
