@@ -46,7 +46,7 @@ export function configureCORS(req: VercelRequest, res: VercelResponse) {
       .map((origin) => origin.trim());
   } else {
     // Default fallback - start with localhost
-    allowedOrigins = ["http://localhost:3000"];
+    allowedOrigins = ["http://localhost:3000", "http://unigraph.vercel.app"];
   }
 
   // Add Vercel deployment URL if available
@@ -77,11 +77,11 @@ export function configureCORS(req: VercelRequest, res: VercelResponse) {
       res.setHeader("Access-Control-Allow-Credentials", "true");
       res.setHeader(
         "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, OPTIONS",
+        "GET, POST, PUT, DELETE, OPTIONS"
       );
       res.setHeader(
         "Access-Control-Allow-Headers",
-        "Content-Type, Authorization, X-Requested-With",
+        "Content-Type, Authorization, X-Requested-With"
       );
 
       // Handle preflight requests
@@ -106,11 +106,11 @@ export function configureCORS(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS",
+    "GET, POST, PUT, DELETE, OPTIONS"
   );
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With",
+    "Content-Type, Authorization, X-Requested-With"
   );
 
   // Handle preflight requests
