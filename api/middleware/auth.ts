@@ -90,7 +90,7 @@ export async function authenticateUser(
       });
       res.status(401).json({
         success: false,
-        error: `Invalid or expired token: ${error?.message || "Unknown errorr"}`,
+        error: `Invalid or expired token: ${error?.message || "Unknown error"}`,
       });
       return false;
     }
