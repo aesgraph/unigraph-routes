@@ -64,18 +64,33 @@ export async function authenticateUser(
       return false;
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Create Supabase client with the access token in the auth header
+    // This is the recommended way to verify a JWT token
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
 
-    // Verify the token with Supabase
+    // Verify the token by getting the user
+    // When the client is created with the token in headers, getUser() will verify it
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser(token);
+    } = await supabase.auth.getUser();
 
     if (error || !user) {
+      console.error("Token verification failed:", {
+        error: error?.message,
+        errorCode: error?.status,
+        hasUser: !!user,
+        tokenPrefix: token.substring(0, 20) + "...",
+      });
       res.status(401).json({
         success: false,
-        error: `Invalid or expired token: ${error} ${user}`,
+        error: `Invalid or expired token: ${error?.message || "Unknown error"}`,
       });
       return false;
     }
