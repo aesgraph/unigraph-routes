@@ -10,31 +10,58 @@ interface AuthenticatedRequest extends VercelRequest {
   };
 }
 
-// Whitelist of approved user emails from environment variable
-const APPROVED_USERS = (getEnvVar("APPROVED_USERS") || "")
-  .split(",")
-  .map((email) => email.trim())
-  .filter(Boolean);
+// Helper function to get environment variable value
+// In serverless functions, process.env is the most reliable source
+function getEnvValue(key: string): string | undefined {
+  // In Vercel serverless functions, process.env is the most reliable source
+  if (typeof process !== "undefined" && process.env?.[key]) {
+    return process.env[key];
+  }
+  // Fallback to getEnvVar for other environments
+  return getEnvVar(key);
+}
+
+// Helper function to get approved users from environment variable
+// Reads at runtime to ensure it works in Vercel serverless functions
+function getApprovedUsers(): string[] {
+  const approvedUsersEnv = getEnvValue("APPROVED_USERS") || "";
+
+  return approvedUsersEnv
+    .split(",")
+    .map((email) => email.trim())
+    .filter(Boolean);
+}
 
 export async function authenticateUser(
   req: AuthenticatedRequest,
-  res: VercelResponse,
+  res: VercelResponse
 ): Promise<boolean> {
-  // If the whitelist is not set, handle based on environment
-  if (!getEnvVar("APPROVED_USERS") || APPROVED_USERS.length === 0) {
-    if (getEnvVar("NODE_ENV") === "development") {
-      console.warn(
-        "Warning: APPROVED_USERS is not set. Bypassing user approval check in development mode.",
-      );
-      // In development mode, we still require authentication but skip whitelist
-      const bypassWhitelist = true;
-    } else {
-      res.status(500).json({
-        success: false,
-        error: "APPROVED_USERS environment variable is not set. Access denied.",
-      });
-      return false;
-    }
+  // Get approved users at runtime
+  const APPROVED_USERS = getApprovedUsers();
+  const approvedUsersEnv = getEnvValue("APPROVED_USERS");
+  const isDevelopment = getEnvValue("NODE_ENV") === "development";
+
+  // Check if whitelist is effectively empty (not set, empty string, or only whitespace)
+  const isWhitelistEmpty =
+    !approvedUsersEnv ||
+    approvedUsersEnv.trim() === "" ||
+    APPROVED_USERS.length === 0;
+
+  // If the whitelist is not set in production, deny access immediately
+  if (isWhitelistEmpty && !isDevelopment) {
+    res.status(500).json({
+      success: false,
+      error:
+        "APPROVED_USERS environment variable is not set or is empty. Access denied.",
+    });
+    return false;
+  }
+
+  // In development, warn if whitelist is not set but continue with authentication
+  if (isWhitelistEmpty && isDevelopment) {
+    console.warn(
+      "Warning: APPROVED_USERS is not set or is empty. Bypassing user approval check in development mode."
+    );
   }
 
   try {
@@ -53,8 +80,8 @@ export async function authenticateUser(
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
     // Initialize Supabase client
-    const supabaseUrl = getEnvVar("SUPABASE_URL");
-    const supabaseKey = getEnvVar("SUPABASE_ANON_KEY");
+    const supabaseUrl = getEnvValue("SUPABASE_URL");
+    const supabaseKey = getEnvValue("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !supabaseKey) {
       res.status(500).json({
@@ -95,10 +122,8 @@ export async function authenticateUser(
       return false;
     }
 
-    // Whitelist check (skip in development if APPROVED_USERS not set)
-    const bypassWhitelist =
-      getEnvVar("NODE_ENV") === "development" &&
-      (!getEnvVar("APPROVED_USERS") || APPROVED_USERS.length === 0);
+    // Whitelist check (skip in development if APPROVED_USERS not set or empty)
+    const bypassWhitelist = isDevelopment && isWhitelistEmpty;
 
     if (
       !bypassWhitelist &&
