@@ -26,6 +26,8 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env
+.env.swp
 
 # Vercel
 .vercel
@@ -35,3 +37,4 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+.env*.local
