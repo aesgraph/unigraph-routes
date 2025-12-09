@@ -36,10 +36,28 @@ export async function authenticateUser(
   req: AuthenticatedRequest,
   res: VercelResponse
 ): Promise<boolean> {
+  const isDevelopment = getEnvValue("NODE_ENV") === "development";
+
+  // In development mode, bypass all authentication
+  if (isDevelopment) {
+    console.warn(
+      "⚠️  Development mode: Bypassing all authentication (Supabase and whitelist checks)"
+    );
+
+    // Set a mock development user
+    req.user = {
+      id: "dev-user-id",
+      email: "dev@localhost",
+      role: "admin",
+    };
+
+    return true;
+  }
+
+  // Production mode: Full authentication required
   // Get approved users at runtime
   const APPROVED_USERS = getApprovedUsers();
   const approvedUsersEnv = getEnvValue("APPROVED_USERS");
-  const isDevelopment = getEnvValue("NODE_ENV") === "development";
 
   // Check if whitelist is effectively empty (not set, empty string, or only whitespace)
   const isWhitelistEmpty =
@@ -48,20 +66,13 @@ export async function authenticateUser(
     APPROVED_USERS.length === 0;
 
   // If the whitelist is not set in production, deny access immediately
-  if (isWhitelistEmpty && !isDevelopment) {
+  if (isWhitelistEmpty) {
     res.status(500).json({
       success: false,
       error:
         "APPROVED_USERS environment variable is not set or is empty. Access denied.",
     });
     return false;
-  }
-
-  // In development, warn if whitelist is not set but continue with authentication
-  if (isWhitelistEmpty && isDevelopment) {
-    console.warn(
-      "Warning: APPROVED_USERS is not set or is empty. Bypassing user approval check in development mode."
-    );
   }
 
   try {
@@ -122,13 +133,8 @@ export async function authenticateUser(
       return false;
     }
 
-    // Whitelist check (skip in development if APPROVED_USERS not set or empty)
-    const bypassWhitelist = isDevelopment && isWhitelistEmpty;
-
-    if (
-      !bypassWhitelist &&
-      (!user.email || !APPROVED_USERS.includes(user.email))
-    ) {
+    // Whitelist check - verify user email is in approved list
+    if (!user.email || !APPROVED_USERS.includes(user.email)) {
       res.status(401).json({
         success: false,
         error: "User is not authorized",
