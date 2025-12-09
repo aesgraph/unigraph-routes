@@ -10,8 +10,8 @@
     "test:performance": "./tests/run-tests.sh performance",
     "test:integration": "./tests/run-tests.sh integration",
     "test:auth": "./tests/run-tests.sh auth",
-    "format": "prettier --write .",
-    "build": "npx tsc --noEmit && npm run format -- --check"
+    "format": "npx prettier --write .",
+    "build": "npx tsc --noEmit && npx prettier --check ."
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4",
@@ -21,6 +21,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@vercel/node": "^2.9.6",
+    "prettier": "^3.0.0",
     "tsx": "^4.20.3",
     "typescript": "^5.0.0"
   }

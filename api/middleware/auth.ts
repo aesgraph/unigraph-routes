@@ -10,31 +10,69 @@ interface AuthenticatedRequest extends VercelRequest {
   };
 }
 
-// Whitelist of approved user emails from environment variable
-const APPROVED_USERS = (getEnvVar("APPROVED_USERS") || "")
-  .split(",")
-  .map((email) => email.trim())
-  .filter(Boolean);
+// Helper function to get environment variable value
+// In serverless functions, process.env is the most reliable source
+function getEnvValue(key: string): string | undefined {
+  // In Vercel serverless functions, process.env is the most reliable source
+  if (typeof process !== "undefined" && process.env?.[key]) {
+    return process.env[key];
+  }
+  // Fallback to getEnvVar for other environments
+  return getEnvVar(key);
+}
+
+// Helper function to get approved users from environment variable
+// Reads at runtime to ensure it works in Vercel serverless functions
+function getApprovedUsers(): string[] {
+  const approvedUsersEnv = getEnvValue("APPROVED_USERS") || "";
+
+  return approvedUsersEnv
+    .split(",")
+    .map((email) => email.trim())
+    .filter(Boolean);
+}
 
 export async function authenticateUser(
   req: AuthenticatedRequest,
   res: VercelResponse,
 ): Promise<boolean> {
-  // If the whitelist is not set, handle based on environment
-  if (!getEnvVar("APPROVED_USERS") || APPROVED_USERS.length === 0) {
-    if (getEnvVar("NODE_ENV") === "development") {
-      console.warn(
-        "Warning: APPROVED_USERS is not set. Bypassing user approval check in development mode.",
-      );
-      // In development mode, we still require authentication but skip whitelist
-      const bypassWhitelist = true;
-    } else {
-      res.status(500).json({
-        success: false,
-        error: "APPROVED_USERS environment variable is not set. Access denied.",
-      });
-      return false;
-    }
+  const isDevelopment = getEnvValue("NODE_ENV") === "development";
+
+  // In development mode, bypass all authentication
+  if (isDevelopment) {
+    console.warn(
+      "⚠️  Development mode: Bypassing all authentication (Supabase and whitelist checks)",
+    );
+
+    // Set a mock development user
+    req.user = {
+      id: "dev-user-id",
+      email: "dev@localhost",
+      role: "admin",
+    };
+
+    return true;
+  }
+
+  // Production mode: Full authentication required
+  // Get approved users at runtime
+  const APPROVED_USERS = getApprovedUsers();
+  const approvedUsersEnv = getEnvValue("APPROVED_USERS");
+
+  // Check if whitelist is effectively empty (not set, empty string, or only whitespace)
+  const isWhitelistEmpty =
+    !approvedUsersEnv ||
+    approvedUsersEnv.trim() === "" ||
+    APPROVED_USERS.length === 0;
+
+  // If the whitelist is not set in production, deny access immediately
+  if (isWhitelistEmpty) {
+    res.status(500).json({
+      success: false,
+      error:
+        "APPROVED_USERS environment variable is not set or is empty. Access denied.",
+    });
+    return false;
   }
 
   try {
@@ -53,8 +91,8 @@ export async function authenticateUser(
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
     // Initialize Supabase client
-    const supabaseUrl = getEnvVar("SUPABASE_URL");
-    const supabaseKey = getEnvVar("SUPABASE_ANON_KEY");
+    const supabaseUrl = getEnvValue("SUPABASE_URL");
+    const supabaseKey = getEnvValue("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !supabaseKey) {
       res.status(500).json({
@@ -64,31 +102,39 @@ export async function authenticateUser(
       return false;
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Create Supabase client with the access token in the auth header
+    // This is the recommended way to verify a JWT token
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
 
-    // Verify the token with Supabase
+    // Verify the token by getting the user
+    // When the client is created with the token in headers, getUser() will verify it
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser(token);
+    } = await supabase.auth.getUser();
 
     if (error || !user) {
+      console.error("Token verification failed:", {
+        error: error?.message,
+        errorCode: error?.status,
+        hasUser: !!user,
+        tokenPrefix: token.substring(0, 20) + "...",
+      });
       res.status(401).json({
         success: false,
-        error: "Invalid or expired token",
+        error: `Invalid or expired token: ${error?.message || "Unknown error"}`,
       });
       return false;
     }
 
-    // Whitelist check (skip in development if APPROVED_USERS not set)
-    const bypassWhitelist =
-      getEnvVar("NODE_ENV") === "development" &&
-      (!getEnvVar("APPROVED_USERS") || APPROVED_USERS.length === 0);
-
-    if (
-      !bypassWhitelist &&
-      (!user.email || !APPROVED_USERS.includes(user.email))
-    ) {
+    // Whitelist check - verify user email is in approved list
+    if (!user.email || !APPROVED_USERS.includes(user.email)) {
       res.status(401).json({
         success: false,
         error: "User is not authorized",

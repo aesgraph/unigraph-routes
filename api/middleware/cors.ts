@@ -45,8 +45,12 @@ export function configureCORS(req: VercelRequest, res: VercelResponse) {
       .split(",")
       .map((origin) => origin.trim());
   } else {
-    // Default fallback - start with localhost
-    allowedOrigins = ["http://localhost:3000", "http://unigraph.vercel.app"];
+    // Default fallback - start with localhost and production URLs
+    allowedOrigins = [
+      "http://localhost:3000",
+      "https://unigraph.vercel.app",
+      "https://unigraph-routes.vercel.app",
+    ];
   }
 
   // Add Vercel deployment URL if available
@@ -77,11 +81,11 @@ export function configureCORS(req: VercelRequest, res: VercelResponse) {
       res.setHeader("Access-Control-Allow-Credentials", "true");
       res.setHeader(
         "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, OPTIONS"
+        "GET, POST, PUT, DELETE, OPTIONS",
       );
       res.setHeader(
         "Access-Control-Allow-Headers",
-        "Content-Type, Authorization, X-Requested-With"
+        "Content-Type, Authorization, X-Requested-With",
       );
 
       // Handle preflight requests
@@ -95,22 +99,38 @@ export function configureCORS(req: VercelRequest, res: VercelResponse) {
   }
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
-  } else if (allowedOrigins.length > 0) {
-    // Fallback to first allowed origin
-    res.setHeader("Access-Control-Allow-Origin", allowedOrigins[0]);
+  } else if (origin) {
+    // Check if origin matches any production domain patterns
+    const productionPatterns = [
+      /^https:\/\/unigraph\.vercel\.app$/,
+      /^https:\/\/unigraph-routes\.vercel\.app$/,
+      /^https:\/\/unigraph-[^.]+\.vercel\.app$/,
+      /^https:\/\/unigraph-routes-[^.]+\.vercel\.app$/,
+    ];
+
+    const isAllowedPattern = productionPatterns.some((pattern) =>
+      pattern.test(origin),
+    );
+
+    if (isAllowedPattern) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    } else {
+      // Fallback to first allowed origin for localhost and other development
+      res.setHeader("Access-Control-Allow-Origin", allowedOrigins[0]);
+    }
   } else {
-    // Final fallback - allow all (less secure, but functional)
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    // No origin header - fallback to first allowed origin
+    res.setHeader("Access-Control-Allow-Origin", allowedOrigins[0]);
   }
 
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
+    "GET, POST, PUT, DELETE, OPTIONS",
   );
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With"
+    "Content-Type, Authorization, X-Requested-With",
   );
 
   // Handle preflight requests
