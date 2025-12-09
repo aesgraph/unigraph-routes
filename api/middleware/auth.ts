@@ -34,14 +34,14 @@ function getApprovedUsers(): string[] {
 
 export async function authenticateUser(
   req: AuthenticatedRequest,
-  res: VercelResponse
+  res: VercelResponse,
 ): Promise<boolean> {
   const isDevelopment = getEnvValue("NODE_ENV") === "development";
 
   // In development mode, bypass all authentication
   if (isDevelopment) {
     console.warn(
-      "⚠️  Development mode: Bypassing all authentication (Supabase and whitelist checks)"
+      "⚠️  Development mode: Bypassing all authentication (Supabase and whitelist checks)",
     );
 
     // Set a mock development user
